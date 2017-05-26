@@ -35,8 +35,6 @@ if [ -f "care_everywhere_$network.crl" ]; then
         declare -x REMOTEUSER="root"
 
         # Once the file is converted, we need to put it in the valid location for the Big-IP to access it
-        # Note: this script assumes that you have run my other script 
-        #       to create the initial load of the PEM format CRL file first
-        tmsh modify sys file ssl-crl "/Common/care_everywhere_$network.crl" source-path "file:///var/tmp/care_everywhere_$network.crl.pem"
+        tmsh create sys file ssl-crl "/Common/care_everywhere_$network.crl" source-path "file:///var/tmp/care_everywhere_$network.crl.pem"
         echo "Loaded pem file into ssl-crl"
 fi
