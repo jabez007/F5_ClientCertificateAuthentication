@@ -1,0 +1,12 @@
+# This event is triggered when the load balancer sees a certificate message from the client
+when CLIENTSSL_CLIENTCERT {
+    # if there is a cert set variable c_cert with the client side certificate. 0 is the first cert, 1 the second, etc.
+    if { [SSL::cert count] >= 1 } {
+        set c_cert [SSL::cert 0]
+        log local0. "X509 Certificate Subject [X509::subject $c_cert]" 
+        set subjectMatch "OU=CAREQUALITY"
+        if { not ([X509::subject $c_cert] contains $subjectMatch) } {
+            reject
+            }   
+        }
+    }

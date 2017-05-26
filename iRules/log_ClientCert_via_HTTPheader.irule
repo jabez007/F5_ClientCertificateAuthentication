@@ -1,0 +1,22 @@
+# https://devcentral.f5.com/questions/irule-for-certificate-injection-into-the-http-header
+# Client has already established an SSL connection with the load balancer
+# This event is triggered when the load balancer sees a certificate message from the client
+when CLIENTSSL_CLIENTCERT {
+    # if there is a cert set variable c_cert with the client side certificate. 0 is the first cert, 1 the second, etc.
+    if { [SSL::cert count] >= 1 } {
+        set c_cert [SSL::cert 0]
+    } 
+}
+
+
+#This event is triggered when sending data to the server
+when HTTP_REQUEST_SEND {
+    #evaluate the if statement under client-side context
+    clientside {
+        #if there is a client side cert base64 encode it and inject it in the header
+        if { [info exists c_cert] } {
+            HTTP::header insert X-ARR-ClientCert [b64encode $c_cert]
+        } else {
+        }
+    }
+}
